@@ -1,0 +1,9 @@
+[submodule "lib/glfw"]
+	path = lib/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "lib/cglm"]
+	path = lib/cglm
+	url = https://github.com/recp/cglm.git
+[submodule "lib/cvector"]
+	path = lib/cvector
+	url = https://github.com/C4e10VeK/cvector.git

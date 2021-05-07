@@ -24,10 +24,10 @@ static void _keyboardCallback(GLFWwindow* wnd, int key, int scancode, int action
     switch (action)
     {
         case GLFW_PRESS:
-            mainWindow.keyboardBtn[key].pressed = true;
+            mainWindow.keyboardBtns[key].pressed = true;
             break;
         case GLFW_RELEASE:
-            mainWindow.keyboardBtn[key].pressed = false;
+            mainWindow.keyboardBtns[key].pressed = false;
             break;
         default:
             break;
@@ -105,7 +105,7 @@ void createWindow(int width, int height, const char *title,
     mainWindow.render    = render;
     mainWindow.destroy   = destroy;
 
-    // glfwSetInputMode(mainWindow._glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(mainWindow._glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetFramebufferSizeCallback(mainWindow._glfwWindow, _framebufferCallback);
     glfwSetKeyCallback(mainWindow._glfwWindow, _keyboardCallback);
@@ -119,6 +119,10 @@ void runWindow()
     
     while (!glfwWindowShouldClose(mainWindow._glfwWindow)) 
     {
+        mainWindow.currentTime = glfwGetTime();
+        mainWindow.deltaTime = mainWindow.currentTime - mainWindow.lastTime;
+        mainWindow.lastTime = mainWindow.currentTime;
+
         mainWindow.update();
         mainWindow.render();
 

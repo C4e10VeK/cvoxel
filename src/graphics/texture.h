@@ -13,7 +13,7 @@ typedef struct
 
 Texture createTexture(const char* texPath, GLenum texType);
 
-void bindTexture(Texture* tex, int texUnit);
+void bindTexture(Texture tex, int texUnit);
 
 void deleteTexture(Texture* tex);
 

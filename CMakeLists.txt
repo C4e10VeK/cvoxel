@@ -19,6 +19,9 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
+set(CGLM_STATIC "Static build" ON)
+set(CGLM_USE_C99 "" OFF)
+
 include_directories(
     "${CMAKE_SOURCE_DIR}/lib/cvector/include/"
     "${CMAKE_SOURCE_DIR}/lib/glfw/include/"

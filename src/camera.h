@@ -10,6 +10,8 @@ typedef struct
     mat4s proj, view;
 } Camera;
 
-Camera createCamera(vec3s pos, float aspect, float fov);
+Camera createCamera(vec3s pos, float fov);
+
+void cameraVectorUpdate(Camera* cam);
 
 #endif

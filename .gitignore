@@ -1,2 +1,5 @@
 /.cache/
+/.ccls-cache/
 /build/
+.ccls
+.vimspector.json

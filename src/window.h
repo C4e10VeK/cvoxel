@@ -27,7 +27,7 @@ typedef struct
 
     float deltaTime, currentTime, lastTime;
 
-    Button keyboardBtn[GLFW_KEY_LAST];
+    Button keyboardBtns[GLFW_KEY_LAST];
     Mouse mouse;
 
     WndFunc load, update, render, destroy, cursorUpdate;

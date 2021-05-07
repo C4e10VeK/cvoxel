@@ -16,28 +16,70 @@ Buffer      vbo, ebo;
 Shader      shader;
 Texture     tex;
 
-mat4s model, view, proj;
-vec3s pos   = (vec3s){{0.0f, 0.0f, 5.0f}};
-vec3s front = (vec3s){{0.0f, 0.0f, -1.0f}};
-vec3s up    = (vec3s){{0.0f, 1.0f, 0.0f}};
+mat4s model;
 
 Camera cam;
 
-float yaw = -90.0f, pitch = 0.0f;
+bool curDis = true;
 
 static void load()
 {
+    int a, b;
+
     float vert[] = {
-        1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+
+        1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+        1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+
+        0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+
+        1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+
+        1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
     };
 
     GLuint ind[] = {
         0, 1, 2,
-        3, 2, 1
+        3, 2, 1,
+
+        4, 5, 6,
+        7, 6, 5,
+
+        8, 9, 10,
+        11, 10, 9,
+
+        12, 13, 14,
+        15, 14, 13,
+
+        16, 17, 18,
+        19, 18, 17,
+
+        20, 21, 22,
+        23, 22, 21
     };
+
+    shader = createShader("/home/chelovek/stream/cvoxel/build/tvert.glsl", 
+			"/home/chelovek/stream/cvoxel/build/tfrag.glsl");
 
     vao = createVertexArray();
     vbo = createBuffer(GL_ARRAY_BUFFER);
@@ -50,20 +92,22 @@ static void load()
     bindBuffer(vbo);
     bindBuffer(ebo);
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), ((void*)0));
+    a = glGetAttribLocation(shader.shaderHndel, "aPos");
+    b = glGetAttribLocation(shader.shaderHndel, "aTexCoord");
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(a);
+    glEnableVertexAttribArray(b);
+
+    glVertexAttribPointer(a, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), ((void*)0));
+    glVertexAttribPointer(b, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
     unbindBuffer(ebo);
     unbindBuffer(vbo);
     unbindVertexArray();
 
-    shader = createShader("tvert.glsl", "tfrag.glsl");
-    tex = createTexture("Brick.png", GL_TEXTURE_2D);
+    tex = createTexture("/home/chelovek/stream/cvoxel/build/Brick.png", GL_TEXTURE_2D);
 
-    cam = createCamera((vec3s){{0.0f, 0.0f, 5.0f}}, (mainWindow.size.x / mainWindow.size.y), 45.0f);
+    cam = createCamera((vec3s){{0.0f, 0.0f, 5.0f}}, 45.0f);
 
     glm_mat4_identity(model.raw);
     glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
@@ -71,22 +115,55 @@ static void load()
     glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
 }
 
+//TODO: рефакторнуть кастыль
 static void update()
 {
-    if (mainWindow.keyboardBtn[GLFW_KEY_ESCAPE].pressed) 
+    float speed = 2.5f;
+
+    if (mainWindow.keyboardBtns[GLFW_KEY_ESCAPE].pressed) 
         glfwSetWindowShouldClose(mainWindow._glfwWindow, GLFW_TRUE);
 
-    glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
+    if (mainWindow.keyboardBtns[GLFW_KEY_W].pressed) 
+    {
+        glm_vec3_muladds(cam.front.raw, (speed * mainWindow.deltaTime), cam.pos.raw);
+    }
 
+    if (mainWindow.keyboardBtns[GLFW_KEY_S].pressed) 
+    {
+        glm_vec3_muladds(cam.front.raw, -(speed * mainWindow.deltaTime), cam.pos.raw);
+    }
+
+    if (mainWindow.keyboardBtns[GLFW_KEY_A].pressed) 
+    {
+        glm_vec3_muladds(cam.right.raw, -(speed * mainWindow.deltaTime), cam.pos.raw);
+    }
+
+    if (mainWindow.keyboardBtns[GLFW_KEY_D].pressed) 
+    {
+        glm_vec3_muladds(cam.right.raw, (speed * mainWindow.deltaTime), cam.pos.raw);
+    }
+
+    //shader reload
+    if (mainWindow.keyboardBtns[GLFW_KEY_R].pressed)
+    {
+        deleteShader(&shader);
+        shader = createShader("tvert.glsl", "tfrag.glsl");
+    }
+
+    cam.aspect = (mainWindow.size.x / mainWindow.size.y);
+    glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
     glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
 }
 
 static void render()
 {
     glClearColor(0.1f, 0.5f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    bindTexture(&tex, 0);
+    glEnable(GL_DEPTH_TEST);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    bindTexture(tex, 0);
 
     bindShader(shader);
     shaderSetMat4(shader, "model", model.raw);
@@ -95,38 +172,28 @@ static void render()
 
     bindVertexArray(vao);
     bindBuffer(ebo);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
     unbindBuffer(ebo);
     unbindVertexArray();
 }
 
 static void destroy()
 {
+    deleteTexture(&tex);
     deleteShader(&shader);
     deleteBuffer(&vbo);
     deleteVertexArray(&vao);
 }
 
-static void crrs()
+static void cursorUpd()
 {
-    cam.yaw   += mainWindow.mouse.delta.x * 0.1f;
-    cam.pitch += mainWindow.mouse.delta.y * 0.1f;
-
-    cam.pitch = glm_clamp(cam.pitch, -89.0f, 89.0f);
-
-    cam.front = (vec3s){{
-        cosf(glm_rad(cam.yaw)) * cosf(glm_rad(cam.pitch)),
-        sinf(glm_rad(cam.pitch)),
-        sinf(glm_rad(cam.yaw)) * cosf(glm_rad(cam.pitch))
-    }};
-
-    glm_vec3_normalize(cam.front.raw);
+    cameraVectorUpdate(&cam);
 }
 
 int main()
 {
     createWindow(800, 600, "cwindow", load, update, render, destroy);
-    mainWindow.cursorUpdate = crrs;
+    mainWindow.cursorUpdate = cursorUpd;
     runWindow();
     
     return 0;

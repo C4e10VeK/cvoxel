@@ -1,10 +1,13 @@
 #include "shader.h"
 #include <assert.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
+
+#include <stdlib.h>
 
 static void _checkError(GLuint glHandle, GLenum status,
-    void (*GLget)(GLuint, GLenum, GLint*), void (*GLinfoLog)(GLuint, GLsizei, GLsizei*, GLchar*)
+    void (*GLget)(GLuint, GLenum, GLint*), 
+    void (*GLinfoLog)(GLuint, GLsizei, GLsizei*, GLchar*)
 )
 {
     char log[1024];
@@ -24,14 +27,12 @@ static GLuint _compile(const char* path, GLenum type)
 {
     GLuint sh;
     int length;
-    char* realPath = NULL;
     char* sCode = NULL;
     FILE* f = NULL;
 
-    realPath = realpath(path, NULL);
-    assert(realPath);
+	assert(path);
 
-    f = fopen(realPath, "rb");
+    f = fopen(path, "rb");
     assert(f);
     fseek(f, 0, SEEK_END);
     length = ftell(f);
@@ -46,7 +47,6 @@ static GLuint _compile(const char* path, GLenum type)
     _checkError(sh, GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
     
     fclose(f);
-    free(realPath);
     free(sCode);
     
     return sh;
@@ -66,9 +66,6 @@ Shader createShader(const char *vertPath, const char *fragPath)
 
     glLinkProgram(shader.shaderHndel);
     _checkError(shader.shaderHndel, GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
-
-    glDetachShader(shader.shaderHndel, vertexShader);
-    glDetachShader(shader.shaderHndel, fragmentShader);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);

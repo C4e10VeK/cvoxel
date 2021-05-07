@@ -29,4 +29,5 @@ void setBufferData(Buffer buffer, size_t size, void *data, GLenum drawType)
 void deleteBuffer(Buffer *buffer)
 {
     glDeleteBuffers(1, &buffer->bufHandel);
+    buffer->target = 0;
 }

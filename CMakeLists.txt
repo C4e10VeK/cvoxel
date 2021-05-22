@@ -11,7 +11,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES}
     "${CMAKE_SOURCE_DIR}/lib/stb_image/stb_image.c"
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -g -O3)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -ggdb -Os)
 
 find_package(OpenGL REQUIRED)
 

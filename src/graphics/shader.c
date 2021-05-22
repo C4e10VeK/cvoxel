@@ -31,8 +31,8 @@ static GLuint _compile(const char* path, GLenum type)
     FILE* f = NULL;
 
 	assert(path);
-
-    f = fopen(path, "rb");
+    
+    f = fopen(path, "rb"); //FIXME: local path doesn't work
     assert(f);
     fseek(f, 0, SEEK_END);
     length = ftell(f);
@@ -48,7 +48,7 @@ static GLuint _compile(const char* path, GLenum type)
     
     fclose(f);
     free(sCode);
-    
+
     return sh;
 }
 

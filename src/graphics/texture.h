@@ -18,3 +18,4 @@ void bindTexture(Texture tex, int texUnit);
 void deleteTexture(Texture* tex);
 
 #endif
+

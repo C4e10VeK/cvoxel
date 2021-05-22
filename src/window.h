@@ -36,7 +36,11 @@ typedef struct
 extern Window mainWindow;
 
 void createWindow(int width, int height, const char* title,
-    WndFunc load, WndFunc update, WndFunc render, WndFunc destroy
+    WndFunc load, 
+    WndFunc update, 
+    WndFunc render, 
+    WndFunc destroy,
+    WndFunc cursorUpd
 );
 
 void runWindow();

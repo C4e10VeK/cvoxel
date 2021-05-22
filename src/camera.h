@@ -15,3 +15,4 @@ Camera createCamera(vec3s pos, float fov);
 void cameraVectorUpdate(Camera* cam);
 
 #endif
+

@@ -13,12 +13,17 @@ static void _errorWndCallback(int code, const char* log)
 
 static void _framebufferCallback(GLFWwindow* wnd, int width, int height)
 {
+    (void) wnd;
     glViewport(0, 0, width, height);
     mainWindow.size = (vec2s){{width, height}};
 }
 
 static void _keyboardCallback(GLFWwindow* wnd, int key, int scancode, int action, int mods)
 {
+    (void) wnd;
+    (void) scancode;
+    (void) mods;
+
     if (key < 0) return;
 
     switch (action)
@@ -36,6 +41,9 @@ static void _keyboardCallback(GLFWwindow* wnd, int key, int scancode, int action
 
 static void _mouseBtnCallback(GLFWwindow* wnd, int btn, int action, int mode)
 {
+    (void) wnd;
+    (void) mode;
+
     if (btn < 0) return;
 
     switch (action)
@@ -53,6 +61,8 @@ static void _mouseBtnCallback(GLFWwindow* wnd, int btn, int action, int mode)
 
 static void _cursorPosCallback(GLFWwindow* wnd, double x, double y)
 {
+    (void) wnd;
+
     vec2s p = (vec2s){{x, y}};
 
     mainWindow.mouse.delta = (vec2s){{
@@ -66,7 +76,11 @@ static void _cursorPosCallback(GLFWwindow* wnd, double x, double y)
 }
 
 void createWindow(int width, int height, const char *title, 
-    WndFunc load, WndFunc update, WndFunc render, WndFunc destroy)
+    WndFunc load, 
+    WndFunc update, 
+    WndFunc render, 
+    WndFunc destroy,
+    WndFunc cursorUpd)
 {
     glfwSetErrorCallback(_errorWndCallback);
     if (!glfwInit()) 
@@ -98,14 +112,15 @@ void createWindow(int width, int height, const char *title,
         exit(1);
     }
 
-    mainWindow.size      = (vec2s){{width, height}};
-    mainWindow.mouse.pos = (vec2s){{width/2.0f, height/2.0f}};
-    mainWindow.load      = load;
-    mainWindow.update    = update;
-    mainWindow.render    = render;
-    mainWindow.destroy   = destroy;
+    mainWindow.size         = (vec2s){{width, height}};
+    mainWindow.mouse.pos    = (vec2s){{width/2.0f, height/2.0f}};
+    mainWindow.load         = load;
+    mainWindow.update       = update;
+    mainWindow.render       = render;
+    mainWindow.destroy      = destroy;
+    mainWindow.cursorUpdate = cursorUpd;
 
-    glfwSetInputMode(mainWindow._glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(mainWindow._glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetFramebufferSizeCallback(mainWindow._glfwWindow, _framebufferCallback);
     glfwSetKeyCallback(mainWindow._glfwWindow, _keyboardCallback);
@@ -135,3 +150,4 @@ void runWindow()
     glfwDestroyWindow(mainWindow._glfwWindow);
     glfwTerminate();
 }
+

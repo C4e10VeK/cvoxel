@@ -2,4 +2,5 @@
 /.ccls-cache/
 /build/
 .ccls
+compile_flags.txt
 .vimspector.json

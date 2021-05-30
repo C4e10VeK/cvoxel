@@ -4,11 +4,12 @@
 #include <cglm/cglm.h>
 #include "utils/vec3s.h"
 
-Camera createCamera(vec3s pos, float fov)
+Camera createCamera(vec3s pos, float fov, float sensivity)
 {
     Camera cam = {
         .aspect = (mainWindow.size.x / mainWindow.size.y),
         .fov = fov,
+        .sensivity = sensivity,
         .yaw = -90.0f,
         .pitch = 0.0f,
         .pos = pos
@@ -26,9 +27,9 @@ Camera createCamera(vec3s pos, float fov)
 
 void cameraVectorUpdate(Camera *cam)
 {
-    cam->yaw   += mainWindow.mouse.delta.x * 0.1f;
-    cam->pitch += mainWindow.mouse.delta.y * 0.1f;
-    cam->pitch = glm_clamp(cam->pitch, -89.0f, 89.0f);
+    cam->yaw   += mainWindow.mouse.delta.x * cam->sensivity;
+    cam->pitch += mainWindow.mouse.delta.y * cam->sensivity;
+    cam->pitch =  glm_clamp(cam->pitch, -89.0f, 89.0f);
 
     cam->front = (vec3s){{
         cosf(glm_rad(cam->yaw)) * cosf(glm_rad(cam->pitch)),

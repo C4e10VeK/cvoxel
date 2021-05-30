@@ -9,7 +9,14 @@
 #include "camera.h"
 #include "world/chunk.h"
 
+#define VERT_PATH "/home/chelovek/stream/cvoxel/build/tvert.glsl"
+#define FRAG_PATH "/home/chelovek/stream/cvoxel/build/tfrag.glsl"
+#define TEXTURE_PATH "/home/chelovek/stream/cvoxel/build/Brick.png"
+
 #define WORLD_VOL 512
+
+// #define clear() printf("\033[H\033[J")
+// #define gotoxy(x, y) printf("\033[%d;%dH", (y), (x))
 
 Shader      shader;
 Texture     tex;
@@ -19,12 +26,9 @@ mat4s       model;
 
 static void load()
 {
-    shader = createShader(
-            "/home/chelovek/stream/cvoxel/build/tvert.glsl", 
-			"/home/chelovek/stream/cvoxel/build/tfrag.glsl"
-            );
+    shader = createShader(VERT_PATH, FRAG_PATH);
 
-    tex = createTexture("/home/chelovek/stream/cvoxel/build/Brick.png", GL_TEXTURE_2D); 
+    tex = createTexture(TEXTURE_PATH, GL_TEXTURE_2D); 
 
     for (size_t x = 0; x < 16; x++)
     {
@@ -39,18 +43,25 @@ static void load()
         }
     }
 
-    cam = createCamera((vec3s){{5.0f, 10.0f, 5.0f}}, 45.0f);
+    cam = createCamera((vec3s){{5.0f, 10.0f, 5.0f}}, 45.0f, 0.15);
 
     glm_mat4_identity(model.raw);
     glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
 
     glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
+
+    // clear();
+    // puts(
+    //     "╭───────────────────────────────────────╮\n"
+    //     "|                                       |\n"
+    //     "╰───────────────────────────────────────╯\n"
+    // );
 }
 
 //TODO: refactor this
 static void update()
 {
-    float speed = 2.5f;
+    float speed = 5.0f * mainWindow.deltaTime;
 
     if (mainWindow.keyboardBtns[GLFW_KEY_ESCAPE].pressed) 
         glfwSetWindowShouldClose(mainWindow._glfwWindow, GLFW_TRUE);
@@ -70,22 +81,22 @@ static void update()
     
     if (mainWindow.keyboardBtns[GLFW_KEY_W].pressed) 
     {
-        glm_vec3_muladds(cam.front.raw, (speed * mainWindow.deltaTime), cam.pos.raw);
+        glm_vec3_muladds(cam.front.raw, speed, cam.pos.raw);
     }
 
     if (mainWindow.keyboardBtns[GLFW_KEY_S].pressed) 
     {
-        glm_vec3_muladds(cam.front.raw, -(speed * mainWindow.deltaTime), cam.pos.raw);
+        glm_vec3_muladds(cam.front.raw, -speed, cam.pos.raw);
     }
 
     if (mainWindow.keyboardBtns[GLFW_KEY_A].pressed) 
     {
-        glm_vec3_muladds(cam.right.raw, -(speed * mainWindow.deltaTime), cam.pos.raw);
+        glm_vec3_muladds(cam.right.raw, -speed, cam.pos.raw);
     }
 
     if (mainWindow.keyboardBtns[GLFW_KEY_D].pressed) 
     {
-        glm_vec3_muladds(cam.right.raw, (speed * mainWindow.deltaTime), cam.pos.raw);
+        glm_vec3_muladds(cam.right.raw, speed, cam.pos.raw);
     }
 
     //shader reload
@@ -93,20 +104,23 @@ static void update()
     if (mainWindow.keyboardBtns[GLFW_KEY_R].pressed)
     {
         deleteShader(&shader);
-        shader = createShader("tvert.glsl", "tfrag.glsl");
+        shader = createShader(VERT_PATH, FRAG_PATH);
     }
     //----------------------------------------------------------------
 
     cam.aspect = (mainWindow.size.x / mainWindow.size.y);
     glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
     glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
+
+    // gotoxy(2, 2);
+    // printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 static void render()
 {
     glClearColor(0.1f, 0.5f, 1.0f, 1.0f);
-
-    glEnable(GL_DEPTH_TEST);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

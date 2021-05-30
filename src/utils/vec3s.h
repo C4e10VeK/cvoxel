@@ -12,10 +12,24 @@ CGLM_INLINE vec3s vec3_add(vec3s a, vec3s b)
     return res;
 }
 
+CGLM_INLINE vec3s vec3_adds(vec3s a, float s)
+{
+    vec3s res;
+    glm_vec3_adds(a.raw, s, res.raw);
+    return res;
+}
+
 CGLM_INLINE vec3s vec3_sub(vec3s a, vec3s b)
 {
     vec3s res;
     glm_vec3_sub(a.raw, b.raw, res.raw);
+    return res;
+}
+
+CGLM_INLINE vec3s vec3_subs(vec3s a, float s)
+{
+    vec3s res;
+    glm_vec3_subs(a.raw, s, res.raw);
     return res;
 }
 

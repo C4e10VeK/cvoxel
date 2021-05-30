@@ -7,11 +7,12 @@
 
 typedef struct
 {
-    unsigned int _indCount;
+    uint32_t _vertCount;
+    uint32_t _indCount;
     VertexArray _vao;
     Buffer _vbo, _ebo;
 
-    Vector _vertixes;
+    Vector _vertices;
     Vector _indeces; 
 } Mesh;
 

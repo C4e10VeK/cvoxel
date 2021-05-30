@@ -9,7 +9,7 @@
 #define CHUNK_SIZE 16
 #define CHUNK_VOL  4096
 
-typedef unsigned int Voxel;
+typedef uint32_t Voxel;
 
 typedef struct
 {
@@ -27,7 +27,7 @@ typedef struct
 
 Chunk genFlatChunk(vec3s position);
 
-ChunkMesh* genChunkMesh(Chunk* chuhk);
+ChunkMesh* genChunkMesh(const Chunk* chuhk);
 void drawChunk(ChunkMesh* chunkMesh);
 void destroyChunkMesh(ChunkMesh* chunkMesh);
 

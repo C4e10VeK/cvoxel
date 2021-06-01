@@ -25,9 +25,9 @@ typedef struct
     ChunkMesh* _chunkMesh;
 } Chunk;
 
-Chunk genFlatChunk(vec3s position);
+Chunk chunkInit(vec3s position);
 
-ChunkMesh* genChunkMesh(const Chunk* chuhk);
+ChunkMesh* genChunkMesh(const Chunk* chuhk, Chunk* chunks);
 void drawChunk(ChunkMesh* chunkMesh);
 void destroyChunkMesh(ChunkMesh* chunkMesh);
 

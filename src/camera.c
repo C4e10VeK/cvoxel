@@ -1,8 +1,8 @@
 #include "camera.h"
-#include "cglm/vec3.h"
 #include "window.h"
-#include <cglm/cglm.h>
-#include "utils/vec3s.h"
+#include <cglm/struct/vec3.h>
+#include <cglm/struct/mat4.h>
+#include <cglm/struct/cam.h>
 
 Camera createCamera(vec3s pos, float fov, float sensivity)
 {
@@ -18,9 +18,9 @@ Camera createCamera(vec3s pos, float fov, float sensivity)
     cam.front = (vec3s){{0.0f, 0.0f, -1.0f}};
     cam.up = (vec3s){{0.0f, 1.0f, 0.0f}};
 
-    glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
+    cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 100.0f);
 
-    glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
+    cam.view = glms_lookat(cam.pos, glms_vec3_add(cam.pos, cam.front), cam.up);
 
     return cam;
 }
@@ -37,6 +37,6 @@ void cameraVectorUpdate(Camera *cam)
         sinf(glm_rad(cam->yaw)) * cosf(glm_rad(cam->pitch))
     }};
 
-    cam->front = vec3_normilize(cam->front);
-    glm_vec3_crossn(cam->front.raw, cam->up.raw, cam->right.raw);
+    glms_vec3_norm(cam->front);
+    cam->right = glms_vec3_crossn(cam->front, cam->up);
 }

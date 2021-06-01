@@ -11,7 +11,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES}
     "${CMAKE_SOURCE_DIR}/lib/stb_image/stb_image.c"
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -ggdb -Os)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -ggdb -O3)
 
 find_package(OpenGL REQUIRED)
 
@@ -35,4 +35,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/lib/cglm/)
 
 add_library(glad "${CMAKE_SOURCE_DIR}/lib/glad/src/gl.c")
 
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glad glfw cglm)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL glad glfw cglm)

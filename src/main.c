@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <cglm/cglm.h>
-#include "utils/vec3s.h"
+#include <cglm/struct.h>
 #include "window.h"
 
 //TODO: refactor this
@@ -15,14 +15,25 @@
 
 #define WORLD_VOL 512
 
-// #define clear() printf("\033[H\033[J")
-// #define gotoxy(x, y) printf("\033[%d;%dH", (y), (x))
+#define clear() printf("\033[H\033[J")
+#define gotoxy(x, y) printf("\033[%d;%dH", (y), (x))
 
 Shader      shader;
 Texture     tex;
 Chunk       chunks[WORLD_VOL];
+ChunkMesh*  meshes[WORLD_VOL];
 Camera      cam;
 mat4s       model;
+
+static void _drawConsoleBox()
+{
+    clear();
+    puts(
+        "╭───────────────────────────────────────╮\n"
+        "|                                       |\n"
+        "╰───────────────────────────────────────╯\n"
+    );
+}
 
 static void load()
 {
@@ -36,32 +47,24 @@ static void load()
         {
             for (size_t z = 0; z < 16; z++) 
             {
-                Chunk* pChunk = &chunks[(y * 16 + x) * 16 + z];
-                *pChunk = genFlatChunk((vec3s){{x, y, z}});
-                pChunk->_chunkMesh = genChunkMesh(pChunk);
+                Chunk* pChunk = &chunks[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z];
+                *pChunk = chunkInit((vec3s){{x, y, z}});
+                meshes[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z] = genChunkMesh(pChunk, chunks);
+                pChunk->_chunkMesh = meshes[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z];
             }
         }
     }
 
-    cam = createCamera((vec3s){{5.0f, 10.0f, 5.0f}}, 45.0f, 0.15);
+    cam = createCamera((vec3s){{16.0f, 6.0f, 16.0f}}, 45.0f, 0.15);
 
-    glm_mat4_identity(model.raw);
-    glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
-
-    glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
-
-    // clear();
-    // puts(
-    //     "╭───────────────────────────────────────╮\n"
-    //     "|                                       |\n"
-    //     "╰───────────────────────────────────────╯\n"
-    // );
+    model = glms_mat4_identity();
+    cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 1000.0f);
+    cam.view = glms_lookat(cam.pos, glms_vec3_add(cam.pos, cam.front), cam.up);
 }
 
-//TODO: refactor this
 static void update()
 {
-    float speed = 5.0f * mainWindow.deltaTime;
+    float speed = 10.0f * mainWindow.deltaTime;
 
     if (mainWindow.keyboardBtns[GLFW_KEY_ESCAPE].pressed) 
         glfwSetWindowShouldClose(mainWindow._glfwWindow, GLFW_TRUE);
@@ -109,13 +112,15 @@ static void update()
     //----------------------------------------------------------------
 
     cam.aspect = (mainWindow.size.x / mainWindow.size.y);
-    glm_perspective(cam.fov, cam.aspect, 0.1f, 100.0f, cam.proj.raw);
-    glm_lookat(cam.pos.raw, vec3_add(cam.pos, cam.front).raw, cam.up.raw, cam.view.raw);
-
-    // gotoxy(2, 2);
-    // printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
+    cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 1000.0f);
+    cam.view = glms_lookat(cam.pos, glms_vec3_add(cam.pos, cam.front), cam.up);
+    
+    _drawConsoleBox();
+    gotoxy(2, 2);
+    printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
 
     glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_CULL_FACE);
 }
 
 static void render()
@@ -132,7 +137,7 @@ static void render()
     shaderSetMat4(shader, "proj", cam.proj.raw);
 
     for (size_t i = 0; i < WORLD_VOL; i++)
-        drawChunk(chunks[i]._chunkMesh);
+        drawChunk(meshes[i]);
 }
 
 static void destroy()
@@ -141,7 +146,7 @@ static void destroy()
     deleteShader(&shader);
 
     for (size_t i = 0; i < WORLD_VOL; i++)
-        destroyChunkMesh(chunks[i]._chunkMesh);
+        destroyChunkMesh(meshes[i]);
 }
 
 static void cursorUpd()

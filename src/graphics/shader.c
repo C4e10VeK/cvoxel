@@ -83,6 +83,12 @@ void unbindShader()
     glUseProgram(0);
 }
 
+
+void shaderSetFloat(Shader shader, const char *name, float value)
+{
+    glUniform1f(glGetUniformLocation(shader.shaderHndel, name), value);
+}
+
 void shaderSetVec3(Shader shader, const char *name, vec3 vec)
 {
     glUniform3fv(glGetUniformLocation(shader.shaderHndel, name), 1, vec);

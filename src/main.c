@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory.h>
 #include <cglm/cglm.h>
 #include <cglm/struct.h>
 #include "window.h"
@@ -13,7 +14,11 @@
 #define FRAG_PATH "/home/chelovek/stream/cvoxel/build/tfrag.glsl"
 #define TEXTURE_PATH "/home/chelovek/stream/cvoxel/build/Brick.png"
 
-#define WORLD_VOL 512
+#define WORLD_VOL 4096
+
+//Speed test
+#include <time.h>
+#include "utils/macro.h"
 
 #define clear() printf("\033[H\033[J")
 #define gotoxy(x, y) printf("\033[%d;%dH", (y), (x))
@@ -39,23 +44,43 @@ static void load()
 {
     shader = createShader(VERT_PATH, FRAG_PATH);
 
-    tex = createTexture(TEXTURE_PATH, GL_TEXTURE_2D); 
+    tex = createTexture(TEXTURE_PATH, GL_TEXTURE_2D);
+    // tex = createCustomTexture();
 
     for (size_t x = 0; x < 16; x++)
     {
-        for (size_t y = 0; y < 2; y++)
+        for (size_t y = 0; y < 16; y++)
         {
             for (size_t z = 0; z < 16; z++) 
             {
                 Chunk* pChunk = &chunks[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z];
                 *pChunk = chunkInit((vec3s){{x, y, z}});
-                meshes[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z] = genChunkMesh(pChunk, chunks);
-                pChunk->_chunkMesh = meshes[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z];
+                memset(pChunk->adjacentChunks.raw, 0, 6 * sizeof(Chunk*));
+
+                pChunk->adjacentChunks._back = (int)z - 1 >= 0 ? &chunks[(y * CHUNK_SIZE + x) * CHUNK_SIZE + (z - 1)] : NULL;
+
+                pChunk->adjacentChunks._front = (int)z + 1 < 16 ? &chunks[(y * CHUNK_SIZE + x) * CHUNK_SIZE + (z + 1)] : NULL;
+                
+                pChunk->adjacentChunks._left = (int)x - 1 >= 0 ? &chunks[(y * CHUNK_SIZE + (x - 1)) * CHUNK_SIZE + z] : NULL;
+
+                pChunk->adjacentChunks._right = (int)x + 1 < 16 ? &chunks[(y * CHUNK_SIZE + (x + 1)) * CHUNK_SIZE + z] : NULL;
+                
+                pChunk->adjacentChunks._bottom = (int)y - 1 >= 0 ? &chunks[((y - 1) * CHUNK_SIZE + x) * CHUNK_SIZE + z] : NULL;
+                
+                pChunk->adjacentChunks._top = (int)y + 1 < 16 ? &chunks[((y + 1) * CHUNK_SIZE + x) * CHUNK_SIZE + z] : NULL;
             }
         }
     }
 
-    cam = createCamera((vec3s){{16.0f, 6.0f, 16.0f}}, 45.0f, 0.15);
+    for (size_t i = 0; i < WORLD_VOL; i++)
+    {
+        START_SPEED_TEST;
+        meshes[i] = genChunkMesh(&chunks[i]);
+        chunks[i]._chunkMesh = meshes[i];
+        STOP_SPEED_TEST;
+    } 
+
+    cam = createCamera((vec3s){{16.0f, 32.0f, 16.0f}}, 45.0f, 0.15);
 
     model = glms_mat4_identity();
     cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 1000.0f);
@@ -115,12 +140,12 @@ static void update()
     cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 1000.0f);
     cam.view = glms_lookat(cam.pos, glms_vec3_add(cam.pos, cam.front), cam.up);
     
-    _drawConsoleBox();
-    gotoxy(2, 2);
-    printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
+    // _drawConsoleBox();
+    // gotoxy(2, 2);
+    // printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
 
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 }
 
 static void render()
@@ -137,7 +162,9 @@ static void render()
     shaderSetMat4(shader, "proj", cam.proj.raw);
 
     for (size_t i = 0; i < WORLD_VOL; i++)
-        drawChunk(meshes[i]);
+    {
+        drawChunkMesh(meshes[i]);
+    }
 }
 
 static void destroy()

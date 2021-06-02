@@ -1,7 +1,8 @@
 #include "chunk.h"
 #include <cglm/struct/vec3.h>
 #include <math.h>
-#include <sys/time.h>
+#include <stdbool.h>
+#include "../utils/macro.h"
 #include "../graphics/renderer.h"
 
 #define IS_IN(x, y, z) ((x) >= 0 && (x) < CHUNK_SIZE && (y) >= 0 && (y) < CHUNK_SIZE && (z) >= 0 && (z) < CHUNK_SIZE)
@@ -45,11 +46,7 @@ Chunk chunkInit(vec3s position)
                 float realY = y + position.y * CHUNK_SIZE;
                 float realZ = z + position.z * CHUNK_SIZE;
 
-                Voxel id = 0;
-
-                int a = ((sinf(realX * 0.1f) * 0.5f + 0.25f) + (cosf(realZ * 0.1f) * 0.5f + 0.25f)) * 15;
-
-                if (realY < a) id = 1;
+                Voxel id = realY <= 8 + ((sinf(realX * 0.1f) * 0.5f + 0.25f) + (cosf(realZ * 0.1f) * 0.5f + 0.25f)) * 15;
 
                 tmpChunk.voxels[(y * CHUNK_SIZE + x) * CHUNK_SIZE + z] = id;
             }
@@ -94,7 +91,7 @@ static void _initChunkMesh(ChunkMesh* chunkMesh)
     unbindVertexArray();
 }
 
-static void _addBackFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addBackFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
         0.0f + offset.x, 0.0f  + offset.y, 0.0f + offset.z,  0.0f, 0.0f, 0.5f,
@@ -113,13 +110,13 @@ static void _addBackFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-static void _addFrontFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addFrontFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
-        1.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  1.0f, 0.0f, 1.0f,
-        1.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  1.0f, 1.0f, 1.0f,
-        0.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  0.0f, 0.0f, 1.0f,
-        0.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  0.0f, 1.0f, 1.0f,
+        1.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  1.0f, 0.0f, 0.75f,
+        1.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  1.0f, 1.0f, 0.75f,
+        0.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  0.0f, 0.0f, 0.75f,
+        0.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  0.0f, 1.0f, 0.75f,
     };
 
     for (size_t i = 0; i < 6; i++)
@@ -132,7 +129,7 @@ static void _addFrontFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-static void _addLeftFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addLeftFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
         0.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  1.0f, 0.0f, 0.5f,
@@ -151,13 +148,13 @@ static void _addLeftFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-static void _addRightFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addRightFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
-        1.0f + offset.x, 0.0f  + offset.y, 0.0f + offset.z,  0.0f, 0.0f, 1.0f,
-        1.0f + offset.x, 1.0f  + offset.y, 0.0f + offset.z,  0.0f, 1.0f, 1.0f,
-        1.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  1.0f, 0.0f, 1.0f,
-        1.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  1.0f, 1.0f, 1.0f,
+        1.0f + offset.x, 0.0f  + offset.y, 0.0f + offset.z,  0.0f, 0.0f, 0.75f,
+        1.0f + offset.x, 1.0f  + offset.y, 0.0f + offset.z,  0.0f, 1.0f, 0.75f,
+        1.0f + offset.x, 0.0f  + offset.y, 1.0f + offset.z,  1.0f, 0.0f, 0.75f,
+        1.0f + offset.x, 1.0f  + offset.y, 1.0f + offset.z,  1.0f, 1.0f, 0.75f,
     };
 
     for (size_t i = 0; i < 6; i++)
@@ -170,7 +167,7 @@ static void _addRightFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-static void _addBottomFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addBottomFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
         1.0f + offset.x, 0.0f  + offset.y, 0.0f + offset.z,  1.0f, 0.0f, 0.5f,
@@ -189,7 +186,7 @@ static void _addBottomFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-static void _addTopFace(vec3s offset, ChunkMesh* chunkMesh)
+CVOX_STATIC_INLINE void _addTopFace(vec3s offset, ChunkMesh* chunkMesh)
 {
     float a[] = {
         0.0f + offset.x, 1.0f  + offset.y, 0.0f + offset.z,  0.0f, 0.0f, 1.0f,
@@ -208,10 +205,8 @@ static void _addTopFace(vec3s offset, ChunkMesh* chunkMesh)
     chunkMesh->mesh._vertCount += 4;
 }
 
-ChunkMesh* genChunkMesh(const Chunk* chunk, Chunk* chunks)
+ChunkMesh* genChunkMesh(const Chunk* chunk)
 {
-    (void) chunks;
-
     vec3s meshOffset;
     Voxel voxId;
     ChunkMesh* chunkMesh = calloc(1, sizeof(ChunkMesh));
@@ -230,32 +225,44 @@ ChunkMesh* genChunkMesh(const Chunk* chunk, Chunk* chunks)
                 
                 meshOffset = glms_vec3_muladd(chunk->_pos, chunk->_offset, (vec3s){{x, y, z}});
 
-                if (!IS_BLOCKED(x, y, z - 1, chunk->voxels))
+                if (!IS_BLOCKED(x, y, z - 1, chunk->voxels)
+                    || ((z - 1) < 0 && chunk->adjacentChunks._back
+                    && !chunk->adjacentChunks._back->voxels[(y * CHUNK_SIZE + x) * CHUNK_SIZE + 15]))
                 {
                     _addBackFace(meshOffset, chunkMesh);
                 }
 
-                if (!IS_BLOCKED(x, y, z + 1, chunk->voxels))
+                if (!IS_BLOCKED(x, y, z + 1, chunk->voxels)
+                    || ((z + 1) >= CHUNK_SIZE && chunk->adjacentChunks._front 
+                    && !chunk->adjacentChunks._front->voxels[(y * CHUNK_SIZE + x) * CHUNK_SIZE + 0]))
                 {
                     _addFrontFace(meshOffset, chunkMesh);
                 }
 
-                if (!IS_BLOCKED(x, y + 1, z, chunk->voxels))
+                if (!IS_BLOCKED(x, y + 1, z, chunk->voxels)
+                    || ((y + 1) >= CHUNK_SIZE && chunk->adjacentChunks._top 
+                    && !chunk->adjacentChunks._top->voxels[(0 * CHUNK_SIZE + x) * CHUNK_SIZE + z]))
                 {
                     _addTopFace(meshOffset, chunkMesh);
                 }
 
-                if (!IS_BLOCKED(x, y - 1, z, chunk->voxels))
+                if (!IS_BLOCKED(x, y - 1, z, chunk->voxels)
+                    || ((y - 1) < 0 && chunk->adjacentChunks._bottom
+                    && !chunk->adjacentChunks._bottom->voxels[(15 * CHUNK_SIZE + x) * CHUNK_SIZE + z]))
                 {
                     _addBottomFace(meshOffset, chunkMesh);
                 }
 
-                if (!IS_BLOCKED(x + 1, y, z, chunk->voxels))
+                if (!IS_BLOCKED(x + 1, y, z, chunk->voxels)
+                    || ((x + 1) >= CHUNK_SIZE && chunk->adjacentChunks._right 
+                    && !chunk->adjacentChunks._right->voxels[(y * CHUNK_SIZE + 0) * CHUNK_SIZE + z]))
                 {
                     _addRightFace(meshOffset, chunkMesh);
                 }
 
-                if (!IS_BLOCKED(x - 1, y, z, chunk->voxels))
+                if (!IS_BLOCKED(x - 1, y, z, chunk->voxels)
+                    || ((x - 1) < 0 && chunk->adjacentChunks._left
+                    && !chunk->adjacentChunks._left->voxels[(y * CHUNK_SIZE + 15) * CHUNK_SIZE + z]))
                 {
                     _addLeftFace(meshOffset, chunkMesh);
                 }
@@ -267,16 +274,19 @@ ChunkMesh* genChunkMesh(const Chunk* chunk, Chunk* chunks)
     return chunkMesh;
 }
 
-void drawChunk(ChunkMesh* chunkMesh)
+void drawChunkMesh(ChunkMesh* chunkMesh)
 {    
     drawMesh(&chunkMesh->mesh);
 }
 
 void destroyChunkMesh(ChunkMesh* chunkMesh)
 {
-    VECTOR_FREE(chunkMesh->mesh._vertices);
-    VECTOR_FREE(chunkMesh->mesh._indeces);
-
+    if (chunkMesh->mesh._vertices._items && chunkMesh->mesh._indeces._items)
+    {
+        VECTOR_FREE(chunkMesh->mesh._vertices);
+        VECTOR_FREE(chunkMesh->mesh._indeces);
+    }
+    
     deleteBuffer(&chunkMesh->mesh._ebo);
     deleteBuffer(&chunkMesh->mesh._vbo);
     deleteVertexArray(&chunkMesh->mesh._vao);

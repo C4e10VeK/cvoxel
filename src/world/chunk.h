@@ -16,19 +16,33 @@ typedef struct
     Mesh mesh;
 } ChunkMesh;
 
-typedef struct
+typedef struct Chunk
 {
     Voxel voxels[CHUNK_VOL];
-    vec3s _pos;
-    vec3s _offset;
+    vec3s _pos, _offset;
+
+    union
+    {
+        struct Chunk* raw[6];
+
+        struct
+        {
+            struct Chunk* _front;
+            struct Chunk* _back;
+            struct Chunk* _top;
+            struct Chunk* _bottom;
+            struct Chunk* _left;
+            struct Chunk* _right;
+        };
+    } adjacentChunks;
 
     ChunkMesh* _chunkMesh;
 } Chunk;
 
 Chunk chunkInit(vec3s position);
 
-ChunkMesh* genChunkMesh(const Chunk* chuhk, Chunk* chunks);
-void drawChunk(ChunkMesh* chunkMesh);
+ChunkMesh* genChunkMesh(const Chunk* chuhk);
+void drawChunkMesh(ChunkMesh* chunkMesh);
 void destroyChunkMesh(ChunkMesh* chunkMesh);
 
 #endif

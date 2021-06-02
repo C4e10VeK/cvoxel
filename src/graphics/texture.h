@@ -11,6 +11,8 @@ typedef struct
     GLenum texType;
 } Texture;
 
+Texture createCustomTexture();
+
 Texture createTexture(const char* texPath, GLenum texType);
 
 void bindTexture(Texture tex, int texUnit);

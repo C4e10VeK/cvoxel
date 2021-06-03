@@ -1,10 +1,11 @@
 #ifndef CVOXEL_CHUNK_H
 #define CVOXEL_CHUNK_H
 
+#include <stdint.h>
+#include <cglm/types-struct.h>
 #include "../graphics/vertexarray.h"
 #include "../graphics/buffer.h"
 #include "../utils/mesh.h"
-#include <cglm/types-struct.h>
 
 #define CHUNK_SIZE 16
 #define CHUNK_VOL  4096

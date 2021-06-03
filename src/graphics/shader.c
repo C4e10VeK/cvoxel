@@ -44,7 +44,8 @@ static GLuint _compile(const char* path, GLenum type)
     sh = glCreateShader(type);
     glShaderSource(sh, 1, (const char* const*)&sCode, &length);
     glCompileShader(sh);
-    _checkError(sh, GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
+    _checkError(sh, GL_COMPILE_STATUS, (void (*)(GLuint, GLenum, GLint *)) glGetShaderiv,
+                (void (*)(GLuint, GLsizei, GLsizei *, GLchar *)) glGetShaderInfoLog);
     
     fclose(f);
     free(sCode);
@@ -65,7 +66,8 @@ Shader createShader(const char *vertPath, const char *fragPath)
     glAttachShader(shader.shaderHndel, fragmentShader);
 
     glLinkProgram(shader.shaderHndel);
-    _checkError(shader.shaderHndel, GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
+    _checkError(shader.shaderHndel, GL_LINK_STATUS, (void (*)(GLuint, GLenum, GLint *)) glGetProgramiv,
+                (void (*)(GLuint, GLsizei, GLsizei *, GLchar *)) glGetProgramInfoLog);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);

@@ -2,6 +2,7 @@
 #define CVOXEL_MESH_H
 
 #include <cvector.h>
+#include <stdint.h>
 #include "../graphics/vertexarray.h"
 #include "../graphics/buffer.h"
 

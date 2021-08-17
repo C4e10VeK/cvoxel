@@ -1,7 +1,4 @@
-/.cache/
-/.ccls-cache/
-/.vscode/
-/build/
-compile_flags.txt
-.vimspector.json
-
+/.cache
+/.vscode
+/.idea
+/build

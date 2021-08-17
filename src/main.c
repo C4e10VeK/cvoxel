@@ -10,9 +10,9 @@
 #include "camera.h"
 #include "world/chunk.h"
 
-#define VERT_PATH "/home/chelovek/stream/cvoxel/build/tvert.glsl"
-#define FRAG_PATH "/home/chelovek/stream/cvoxel/build/tfrag.glsl"
-#define TEXTURE_PATH "/home/chelovek/stream/cvoxel/build/Brick.png"
+#define VERT_PATH "../res/shaders/tvert.glsl"
+#define FRAG_PATH "../res/shaders/tfrag.glsl"
+#define TEXTURE_PATH "../res/textures/Brick.png"
 
 #define WORLD_VOL 4096
 
@@ -21,7 +21,6 @@
 #include "utils/macro.h"
 
 #define clear() printf("\033[H\033[J")
-#define gotoxy(x, y) printf("\033[%d;%dH", (y), (x))
 
 Shader      shader;
 Texture     tex;
@@ -29,16 +28,6 @@ Chunk       chunks[WORLD_VOL];
 ChunkMesh*  meshes[WORLD_VOL];
 Camera      cam;
 mat4s       model;
-
-static void _drawConsoleBox()
-{
-    clear();
-    puts(
-        "╭───────────────────────────────────────╮\n"
-        "|                                       |\n"
-        "╰───────────────────────────────────────╯\n"
-    );
-}
 
 static void load()
 {
@@ -139,10 +128,6 @@ static void update()
     cam.aspect = (mainWindow.size.x / mainWindow.size.y);
     cam.proj = glms_perspective(cam.fov, cam.aspect, 0.1f, 1000.0f);
     cam.view = glms_lookat(cam.pos, glms_vec3_add(cam.pos, cam.front), cam.up);
-    
-    // _drawConsoleBox();
-    // gotoxy(2, 2);
-    // printf("(x:%f y:%f z:%f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

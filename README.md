@@ -7,7 +7,7 @@ My voxel engine in C
 
 ### Clone
 ```bash
-git clone --recuese-submodules https://github.com/C4e10VeK/cvoxel.git
+git clone --recurse-submodules https://github.com/C4e10VeK/cvoxel.git
 ```
 
 ### TODO:

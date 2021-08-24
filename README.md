@@ -5,6 +5,11 @@ My voxel engine in C
   <img src='https://cdn.7tv.app/emote/60ab8e7106222d3c18cc7ced/3x'/>
 </p>
 
+### Clone
+```bash
+git clone --recuese-submodules https://github.com/C4e10VeK/cvoxel.git
+```
+
 ### TODO:
 - [ ] chunk mesher refact
 - [ ] ECS

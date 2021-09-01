@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 static void _checkError(GLuint glHandle, GLenum status,
-    void (*GLget)(GLuint, GLenum, GLint*), 
-    void (*GLinfoLog)(GLuint, GLsizei, GLsizei*, GLchar*)
+    void (*const GLget)(GLuint, GLenum, GLint*), 
+    void (*const GLinfoLog)(GLuint, GLsizei, GLsizei*, GLchar*)
 )
 {
     char log[1024];
@@ -33,10 +33,10 @@ static GLuint _compile(const char* path, GLenum type)
 	assert(path);
     
     f = fopen(path, "rb"); //FIXME: local path doesn't work
-    assert(f);
+    assert(f && "file doesn't open");
     fseek(f, 0, SEEK_END);
     length = ftell(f);
-    assert(length > 0);
+    assert(length > 0 && "File is empty");
     fseek(f, 0, SEEK_SET);
     sCode = calloc(1, length);
     fread(sCode, 1, length, f);

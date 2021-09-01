@@ -1,3 +1,4 @@
+ #define CGLM_USE_ANONYMOUS_STRUCT 1
 #include <stdio.h>
 #include <memory.h>
 #include <cglm/cglm.h>
@@ -10,9 +11,9 @@
 #include "camera.h"
 #include "world/chunk.h"
 
-#define VERT_PATH "../res/shaders/tvert.glsl"
-#define FRAG_PATH "../res/shaders/tfrag.glsl"
-#define TEXTURE_PATH "../res/textures/Brick.png"
+#define VERT_PATH "../res/shaders/vert.glsl"
+#define FRAG_PATH "../res/shaders/frag.glsl"
+#define TEXTURE_PATH "../res/textures/brick.png"
 
 #define WORLD_VOL 4096
 
@@ -63,10 +64,8 @@ static void load()
 
     for (size_t i = 0; i < WORLD_VOL; i++)
     {
-        START_SPEED_TEST;
         meshes[i] = genChunkMesh(&chunks[i]);
-        chunks[i]._chunkMesh = meshes[i];
-        STOP_SPEED_TEST;
+        chunks[i]._chunkMesh = meshes[i]; 
     } 
 
     cam = createCamera((vec3s){{16.0f, 32.0f, 16.0f}}, 45.0f, 0.15);

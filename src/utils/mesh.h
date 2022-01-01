@@ -3,8 +3,11 @@
 
 #include <cvector.h>
 #include <stdint.h>
-#include "../graphics/vertexarray.h"
-#include "../graphics/buffer.h"
+#include "../gl/vertexarray.h"
+#include "../gl/buffer.h"
+
+typedef Vector(float) VectorFloat;
+typedef Vector(uint32_t) VectorU32;
 
 typedef struct
 {
@@ -13,8 +16,8 @@ typedef struct
     VertexArray _vao;
     Buffer _vbo, _ebo;
 
-    Vector _vertices;
-    Vector _indeces; 
+    VectorFloat _vertices;
+    VectorU32 _indeces; 
 } Mesh;
 
 #endif

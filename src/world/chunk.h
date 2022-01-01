@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <cglm/types-struct.h>
-#include "../graphics/vertexarray.h"
-#include "../graphics/buffer.h"
+#include "../gl/vertexarray.h"
+#include "../gl/buffer.h"
 #include "../utils/mesh.h"
 
 #define CHUNK_SIZE 16
@@ -42,7 +42,7 @@ typedef struct Chunk
 
 Chunk chunkInit(vec3s position);
 
-ChunkMesh* genChunkMesh(const Chunk* chuhk);
+ChunkMesh genChunkMesh(const Chunk* chuhk);
 void drawChunkMesh(ChunkMesh* chunkMesh);
 void destroyChunkMesh(ChunkMesh* chunkMesh);
 

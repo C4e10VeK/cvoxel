@@ -1,4 +1,3 @@
- #define CGLM_USE_ANONYMOUS_STRUCT 1
 #include <stdio.h>
 #include <memory.h>
 #include <cglm/cglm.h>
@@ -6,8 +5,8 @@
 #include "window.h"
 
 //TODO: refactor this
-#include "graphics/shader.h"
-#include "graphics/texture.h"
+#include "gl/shader.h"
+#include "gl/texture.h"
 #include "camera.h"
 #include "world/chunk.h"
 
@@ -26,16 +25,19 @@
 Shader      shader;
 Texture     tex;
 Chunk       chunks[WORLD_VOL];
-ChunkMesh*  meshes[WORLD_VOL];
+ChunkMesh   meshes[WORLD_VOL];
 Camera      cam;
 mat4s       model;
 
 static void load()
 {
-    shader = createShader(VERT_PATH, FRAG_PATH);
+    shader = shaderInit(VERT_PATH, FRAG_PATH, 3, (ShaderAttrib[]){
+														{0, "aPos"}, 
+														{1, "aTexCoord"}, 
+														{2, "aLight"}
+													});
 
-    tex = createTexture(TEXTURE_PATH, GL_TEXTURE_2D);
-    // tex = createCustomTexture();
+    tex = textureLoadFromFile(TEXTURE_PATH, GL_TEXTURE_2D);
 
     for (size_t x = 0; x < 16; x++)
     {
@@ -65,7 +67,7 @@ static void load()
     for (size_t i = 0; i < WORLD_VOL; i++)
     {
         meshes[i] = genChunkMesh(&chunks[i]);
-        chunks[i]._chunkMesh = meshes[i]; 
+        chunks[i]._chunkMesh = &meshes[i]; 
     } 
 
     cam = createCamera((vec3s){{16.0f, 32.0f, 16.0f}}, 45.0f, 0.15);
@@ -119,8 +121,8 @@ static void update()
     //----------------------------------------------------------------
     if (mainWindow.keyboardBtns[GLFW_KEY_R].pressed)
     {
-        deleteShader(&shader);
-        shader = createShader(VERT_PATH, FRAG_PATH);
+        shaderDelete(shader);
+        shader = shaderInit(VERT_PATH, FRAG_PATH, 0, NULL);
     }
     //----------------------------------------------------------------
 
@@ -138,26 +140,26 @@ static void render()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    bindTexture(tex, 0);
+    textureBind(&tex, 0);
 
-    bindShader(shader);
-    shaderSetMat4(shader, "model", model.raw);
-    shaderSetMat4(shader, "view", cam.view.raw);
-    shaderSetMat4(shader, "proj", cam.proj.raw);
+    shaderBind(shader);
+    shaderSetMatrix4(shader, "model", model);
+    shaderSetMatrix4(shader, "view", cam.view);
+    shaderSetMatrix4(shader, "proj", cam.proj);
 
     for (size_t i = 0; i < WORLD_VOL; i++)
     {
-        drawChunkMesh(meshes[i]);
+        drawChunkMesh(&meshes[i]);
     }
 }
 
 static void destroy()
 {
-    deleteTexture(&tex);
-    deleteShader(&shader);
+    textureDelete(&tex);
+    shaderDelete(shader);
 
     for (size_t i = 0; i < WORLD_VOL; i++)
-        destroyChunkMesh(meshes[i]);
+        destroyChunkMesh(&meshes[i]);
 }
 
 static void cursorUpd()
@@ -167,6 +169,8 @@ static void cursorUpd()
 
 int main()
 {
+  mat4s foo = glms_mat4_identity();
+  foo = glms_translate(foo, (vec3s){{0.5f, 5.0f, 2.0f}});
     createWindow(800, 600, "cwindow", load, update, render, destroy, cursorUpd);
     runWindow();
     

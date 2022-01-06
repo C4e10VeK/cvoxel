@@ -11,36 +11,36 @@ typedef void (*WndFunc)();
 
 typedef struct
 {
-    bool pressed;
+	bool pressed;
 } Button;
 
 typedef struct
 {
-    Button btn[GLFW_MOUSE_BUTTON_LAST];
-    vec2s pos, delta;
+	Button btn[GLFW_MOUSE_BUTTON_LAST];
+	vec2s pos, delta;
 } Mouse;
 
 typedef struct
 {
-    GLFWwindow* _glfwWindow;
-    vec2s size;
+	GLFWwindow* _glfwWindow;
+	vec2s size;
 
-    float deltaTime, currentTime, lastTime;
+	float deltaTime, currentTime, lastTime;
 
-    Button keyboardBtns[GLFW_KEY_LAST + 1];
-    Mouse mouse;
+	Button keyboardBtns[GLFW_KEY_LAST + 1];
+	Mouse mouse;
 
-    WndFunc load, update, render, destroy, cursorUpdate;
+	WndFunc load, update, render, destroy, cursorUpdate;
 } Window;
 
 extern Window mainWindow;
 
 void createWindow(int width, int height, const char* title,
-    WndFunc load, 
-    WndFunc update, 
-    WndFunc render, 
-    WndFunc destroy,
-    WndFunc cursorUpd
+	WndFunc load, 
+	WndFunc update, 
+	WndFunc render, 
+	WndFunc destroy,
+	WndFunc cursorUpd
 );
 
 void runWindow();

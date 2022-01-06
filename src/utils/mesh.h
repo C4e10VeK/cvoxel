@@ -11,13 +11,13 @@ typedef Vector(uint32_t) VectorU32;
 
 typedef struct
 {
-    uint32_t _vertCount;
-    uint32_t _indCount;
-    VertexArray _vao;
-    Buffer _vbo, _ebo;
+	uint32_t _vertCount;
+	uint32_t _indCount;
+	VertexArray _vao;
+	Buffer _vbo, _ebo;
 
-    VectorFloat _vertices;
-    VectorU32 _indeces; 
+	VectorFloat _vertices;
+	VectorU32 _indeces; 
 } Mesh;
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef RAYCASTING_TEXTURE_H
-#define RAYCASTING_TEXTURE_H
+#ifndef CVOXEL_TEXTURE_H
+#define CVOXEL_TEXTURE_H
 
 #include <glad/gl.h>
 #include "../utils/types.h"
@@ -25,4 +25,4 @@ void textureBind(const Texture *texture, i32 texUnit);
 
 void textureDelete(Texture *texture);
 
-#endif // RAYCASTING_TEXTURE_H
+#endif // CVOXEL_TEXTURE_H

@@ -1,5 +1,5 @@
-#ifndef RAYCASTING_BUFFER_H
-#define RAYCASTING_BUFFER_H
+#ifndef CVOXEL_BUFFER_H
+#define CVOXEL_BUFFER_H
 
 #include <stddef.h>
 #include "glad/gl.h"
@@ -39,4 +39,4 @@ void frameBufferDelete(FrameBuffer *buffer);
 
 void renderBufferDelete(RenderBuffer *buffer);
 
-#endif // RAYCASTING_BUFFER_H
+#endif // CVOXEL_BUFFER_H

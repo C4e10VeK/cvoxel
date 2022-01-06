@@ -14,30 +14,30 @@ typedef uint32_t Voxel;
 
 typedef struct
 {
-    Mesh mesh;
+	Mesh mesh;
 } ChunkMesh;
 
 typedef struct Chunk
 {
-    Voxel voxels[CHUNK_VOL];
-    vec3s _pos, _offset;
+	Voxel voxels[CHUNK_VOL];
+	vec3s _pos, _offset;
 
-    union
-    {
-        struct Chunk* raw[6];
+	union
+	{
+		struct Chunk* raw[6];
 
-        struct
-        {
-            struct Chunk* _front;
-            struct Chunk* _back;
-            struct Chunk* _top;
-            struct Chunk* _bottom;
-            struct Chunk* _left;
-            struct Chunk* _right;
-        };
-    } adjacentChunks;
+		struct
+		{
+			struct Chunk* _front;
+			struct Chunk* _back;
+			struct Chunk* _top;
+			struct Chunk* _bottom;
+			struct Chunk* _left;
+			struct Chunk* _right;
+		};
+	} adjacentChunks;
 
-    ChunkMesh* _chunkMesh;
+	ChunkMesh* _chunkMesh;
 } Chunk;
 
 Chunk chunkInit(vec3s position);

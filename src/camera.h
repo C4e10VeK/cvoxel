@@ -5,9 +5,9 @@
 
 typedef struct
 {
-    float fov, yaw, pitch, aspect, sensivity;
-    vec3s pos, front, up, right;
-    mat4s proj, view;
+	float fov, yaw, pitch, aspect, sensivity;
+	vec3s pos, front, up, right;
+	mat4s proj, view;
 } Camera;
 
 Camera createCamera(vec3s pos, float fov, float sensivity);

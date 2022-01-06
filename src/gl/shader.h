@@ -1,5 +1,5 @@
-#ifndef RAYCASTING_SHADER_H
-#define RAYCASTING_SHADER_H
+#ifndef CVOXEL_SHADER_H
+#define CVOXEL_SHADER_H
 
 #include <stddef.h>
 #include <glad/gl.h>
@@ -32,4 +32,4 @@ void shaderSetMatrix4(Shader shader, const char *name, mat4s data);
 
 void shaderDelete(Shader shader);
 
-#endif // RAYCASTING_SHADER_H
+#endif // CVOXEL_SHADER_H

@@ -1,5 +1,5 @@
-#ifndef RAYCASTING_VERTEXARRAY_H
-#define RAYCASTING_VERTEXARRAY_H
+#ifndef CVOXEL_VERTEXARRAY_H
+#define CVOXEL_VERTEXARRAY_H
 
 #include <glad/gl.h>
 
@@ -13,4 +13,4 @@ void vertexArrayUnbind();
 
 void vertexArrayDelete(VertexArray vertexArray);
 
-#endif // RAYCASTING_VERTEXARRAY_H
+#endif // CVOXEL_VERTEXARRAY_H

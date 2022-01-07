@@ -2,7 +2,7 @@
 #define CVOXEL_TEXTURE_H
 
 #include <glad/gl.h>
-#include "../utils/types.h"
+#include "../../utils/types.h"
 
 typedef struct
 {

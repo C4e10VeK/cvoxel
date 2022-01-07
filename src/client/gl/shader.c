@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../utils/types.h"
+#include "../../utils/types.h"
 
 typedef void (*GLget)(GLuint, GLenum, GLint *);
 typedef void (*GLinfoLog)(GLuint, GLsizei, GLsizei *, GLchar *);

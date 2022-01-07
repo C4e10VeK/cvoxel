@@ -68,6 +68,11 @@ void bufferSetData(Buffer *buffer, size_t size, void *data, GLenum drawType)
 	glNamedBufferData(buffer->handle, size, data, drawType);
 }
 
+void bufferSetSubData(Buffer *buffer, GLintptr offset, size_t size, void *data)
+{
+	glNamedBufferSubData(buffer->handle, offset, size, data);
+}
+
 void bufferDelete(Buffer *buffer)
 {
 	glDeleteBuffers(1, &buffer->handle);

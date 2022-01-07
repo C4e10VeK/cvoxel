@@ -33,6 +33,8 @@ void renderBufferUnbind(const RenderBuffer *buffer);
 
 void bufferSetData(Buffer *buffer, size_t size, void *data, GLenum drawType);
 
+void bufferSetSubData(Buffer *buffer, GLintptr offset, size_t size, void *data);
+
 void bufferDelete(Buffer *buffer);
 
 void frameBufferDelete(FrameBuffer *buffer);

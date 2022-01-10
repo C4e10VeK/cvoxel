@@ -12,6 +12,8 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES}
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 
+set(OpenGL_GL_PREFERENCE GLVND)
+
 find_package(OpenGL REQUIRED)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

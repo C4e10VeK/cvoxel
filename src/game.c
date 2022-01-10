@@ -14,6 +14,8 @@ Game gameInit(Window *wnd)
 	res.wnd = wnd;
 	res.tick = 0;
 
+	ecsInit(&res.ecs);
+
 	return res;
 }
 

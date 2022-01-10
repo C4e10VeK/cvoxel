@@ -3,13 +3,27 @@
 
 #include "../utils/types.h"
 
-//TODO: add ecs realization and implementation
 typedef u32 Entity;
-// const u32 ENTITY_MAX = (0 - 1);
+#define MAX_ENTITIES 500
 
-typedef struct
+enum Component
+{
+	TRANSFORM = 0,
+	CAMERA,
+
+	COMPONENT_COUNT
+};
+
+typedef struct ECS
 {
 	size_t capacity;
-} Ecs;
+	Entity nextFreeEntity;
+} ECS;
+
+ECS ecsInit();
+
+Entity ecsNewEntity(ECS *ecs);
+
+void ecsFree(ECS *ecs);
 
 #endif // CVOXEL_ECS_H

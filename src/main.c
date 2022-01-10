@@ -3,6 +3,8 @@
 
 #include <glad/gl.h>
 
+#include <cglm/types-struct.h>
+
 #include "client/window/window.h"
 #include "game.h"
 
@@ -11,20 +13,6 @@
 #define TEXTURE_PATH "../res/textures/brick.png"
 
 #define WORLD_VOL 4096
-
-static void _mainGameLoop(Game *game)
-{
-	while (!windowIsClosed(game->wnd))
-	{
-		if (game->wnd->keys[GLFW_KEY_ESCAPE])
-			windowClose(game->wnd);
-
-		gameUpdate(game);
-
-		windowPollEvents();
-		windowSwapBuffers(game->wnd);
-	}
-}
 
 int main()
 {
@@ -35,7 +23,7 @@ int main()
 	
 	Game game = gameInit(&wnd);
 
-	_mainGameLoop(&game);
+	mainGameLoop(&game);
 
 	return 0;
 }

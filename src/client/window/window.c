@@ -4,11 +4,10 @@
 
 #include <stdlib.h>
 #include <memory.h>
+#include <assert.h>
 
+#include "../../utils/macro.h"
 #include "../../utils/vmath.h"
-
-#define UNUSED(s) ((void)s)
-
 
 static void _keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -117,6 +116,7 @@ void windowSwapBuffers(Window *wnd)
 
 void windowDestroy(Window *wnd)
 {
+	assert(wnd);
 	glfwDestroyWindow(wnd->raw);
 	glfwTerminate();	
 }

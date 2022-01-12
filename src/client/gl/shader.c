@@ -5,6 +5,15 @@
 
 #include "../../utils/types.h"
 
+#ifdef _WIN32
+#define FILE_OPEN(fn, mode) ({	FILE* f = NULL;\
+								i32 err = fopen_s(&f, fn, mode);\
+								assert(!err);\
+								f;})
+#else
+#define FILE_OPEN(fn, mode) fopen(fn, mode)
+#endif
+
 typedef void (*GLget)(GLuint, GLenum, GLint *);
 typedef void (*GLinfoLog)(GLuint, GLsizei, GLsizei *, GLchar *);
 
@@ -31,19 +40,19 @@ static GLuint _compileShader(const char *shaderPath, GLenum type)
 	i32 length;
 	char *code = NULL;
 
-	FILE *f = fopen(shaderPath, "rb");
-	assert(f && "Failed to open file\n");
+	FILE *file = FILE_OPEN(shaderPath, "rb");
+	assert(file && "Failed to open file\n");
 
-	fseek(f, 0, SEEK_END);
-	length = ftell(f);
+	fseek(file, 0, SEEK_END);
+	length = ftell(file);
 
 	assert(length > 0);
 
-	fseek(f, 0, SEEK_SET);
+	fseek(file, 0, SEEK_SET);
 	code = calloc(sizeof(char), length);
 	assert(code);
 
-	fread(code, 1, length, f);
+	fread(code, 1, length, file);
 
 	shaderProgram = glCreateShader(type);
 	glShaderSource(shaderProgram, 1, (const char* const*)&code, &length);
@@ -51,7 +60,7 @@ static GLuint _compileShader(const char *shaderPath, GLenum type)
 
 	_checkError(shaderProgram, GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
 
-	fclose(f);
+	fclose(file);
 	free(code);
 
 	return shaderProgram;

@@ -3,8 +3,6 @@
 #include <assert.h>
 #include <glad/gl.h>
 
-#define UNUSED(s) ((void)s)
-
 Game gameInit(Window *wnd)
 {
 	Game res;
@@ -14,15 +12,24 @@ Game gameInit(Window *wnd)
 	res.wnd = wnd;
 	res.tick = 0;
 
-	ecsInit(&res.ecs);
+	res.ecs = ecsInit();
 
 	return res;
 }
 
 void gameUpdate(Game *game)
 {
-	UNUSED(game);
+	assert(game);
 
 	glClearColor(0.1, 0.5, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void gameFree(Game *game)
+{
+	assert(game);
+	
+	ecsFree(&game->ecs);
+	game->tick = 0;
+	game->wnd = NULL;
 }

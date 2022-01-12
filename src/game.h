@@ -17,6 +17,8 @@ Game gameInit(Window *wnd);
 
 void gameUpdate(Game *game);
 
+void gameFree(Game *game);
+
 CVOX_INLINE void mainGameLoop(Game *game)
 {
 	while (!windowIsClosed(game->wnd))

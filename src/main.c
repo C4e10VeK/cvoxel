@@ -25,5 +25,8 @@ int main()
 
 	mainGameLoop(&game);
 
+	gameFree(&game);
+	windowDestroy(&wnd);
+
 	return 0;
 }

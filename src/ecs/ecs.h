@@ -22,7 +22,7 @@ typedef struct
 {
 	void *components;
 	size_t typeSize;
-	size_t size;
+	size_t capacity;
 } ComponentList;
 
 typedef struct ECS

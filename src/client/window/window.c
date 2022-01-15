@@ -46,8 +46,8 @@ static void _cursorPosCallback(GLFWwindow *window, double x, double y)
 	wnd->mouse.deltaX = x - wnd->mouse.x;
 	wnd->mouse.deltaY = y - wnd->mouse.y;
 
-	wnd->mouse.deltaX = CLAMP(wnd->mouse.deltaX, 0.0f, 100.0f);
-	wnd->mouse.deltaY = CLAMP(wnd->mouse.deltaY, 0.0f, 100.0f);
+	wnd->mouse.deltaX = CVOX_CLAMP(wnd->mouse.deltaX, 0.0f, 100.0f);
+	wnd->mouse.deltaY = CVOX_CLAMP(wnd->mouse.deltaY, 0.0f, 100.0f);
 
 	wnd->mouse.x = x;
 	wnd->mouse.y = y;

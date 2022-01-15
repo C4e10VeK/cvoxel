@@ -1,11 +1,12 @@
 #include "ecs.h"
-#include "../utils/macro.h"
 #include <assert.h>
 #include <memory.h>
 #include <string.h>
 
-#include "components/componentsInit.h"
-#include "components/name.h"
+#include "../utils/macro.h"
+#include "private/componentsInit.h"
+
+#define ILLEGAL_ENTITY MAX_ENTITIES
 
 ECS ecsInit()
 {
@@ -25,29 +26,29 @@ ECS ecsInit()
 	return res;
 }
 
-CVOX_STATIC_INLINE void _setNextEntity(ECS *ecs)
+CVOX_STATIC_INLINE u32 _nextEntity(ECS *ecs)
 {
 	for (size_t i = 0; i < ecs->flagEntities.size; i++)
 	{
 		if (!bitsetTest(&ecs->flagEntities, i))
 		{
-			ecs->nextEntity = i;
-			break;
+			return i;
 		}
 	}
+
+	return ILLEGAL_ENTITY;
 }
 
 Entity ecsNewEntity(ECS *ecs)
 {
-	Entity res = ecs->nextEntity;
+	Entity res = _nextEntity(ecs);
+
+	assert(res < MAX_ENTITIES);
 
 	if (!ecs->usedComponentFlag[res].data)
 		bitsetAlloc(&ecs->usedComponentFlag[res], MAX_COMPONENTS);
 
 	bitsetSet(&ecs->flagEntities, res);
-	bitsetSet(&ecs->flagEntities, 1);
-
-	_setNextEntity(ecs);
 
 	return res;
 }

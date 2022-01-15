@@ -23,7 +23,7 @@ int main()
 	
 	Game game = gameInit(&wnd);
 
-	mainGameLoop(&game);
+	gameMainLoop(&game);
 
 	gameFree(&game);
 	windowDestroy(&wnd);

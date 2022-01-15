@@ -19,7 +19,7 @@ void gameUpdate(Game *game);
 
 void gameFree(Game *game);
 
-CVOX_INLINE void mainGameLoop(Game *game)
+CVOX_STATIC_INLINE void gameMainLoop(Game *game)
 {
 	while (!windowIsClosed(game->wnd))
 	{

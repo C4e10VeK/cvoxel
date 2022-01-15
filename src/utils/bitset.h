@@ -43,13 +43,13 @@ CVOX_STATIC_INLINE void bitsetSet(Bitset *bitset, size_t n)
 CVOX_STATIC_INLINE void bitsetClear(Bitset *bitset, size_t n)
 {
 	assert(bitset && n < bitset->size);
-	bitset->data[n / CHAR_BIT] &= ~(1 << n % CHAR_BIT);
+	bitset->data[n / CHAR_BIT] &= ~(1 << (n % CHAR_BIT));
 }
 
 CVOX_STATIC_INLINE bool bitsetTest(Bitset *bitset, size_t n)
 {
 	assert(bitset && n < bitset->size);
-	return bitset->data[n / CHAR_BIT] & (1 << n % CHAR_BIT);
+	return bitset->data[n / CHAR_BIT] & (1 << (n % CHAR_BIT));
 }
 
 CVOX_STATIC_INLINE void bitsetFree(Bitset *bitset)

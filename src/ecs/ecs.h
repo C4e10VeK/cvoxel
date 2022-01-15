@@ -6,7 +6,7 @@
 #include "../utils/bitset.h"
 
 typedef u32 Entity;
-#define MAX_ENTITIES 16
+#define MAX_ENTITIES 512
 #define MAX_COMPONENTS COMPONENT_COUNT
 
 enum Component
